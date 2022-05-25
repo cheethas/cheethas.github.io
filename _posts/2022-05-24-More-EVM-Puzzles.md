@@ -3,16 +3,12 @@ layout: post
 title: More EVM Puzzles
 ---
 
-# More EVM Puzzles
-You thought we were all done! Thankfully daltyboy11 of goldfinch has blessed us all with another set of EVM puzzles that serve a rather natural extension to the original set. They follow the same style, and retain alot of the same character! 
-Thankfully Dalty has created made more of the challenging puzzles from the last session that revolve more around the CREATE and CALL opcodes. 
-I'm looking forward to getting straight into this one.
+It's been a while since fvictorio's first release of [Evm Puzzles](https://github.com/fvictorio/evm-puzzles). For those of us who wanted more of them daltyboy11 of goldfinch has blessed has come to the rescue, releasing 10 more puzzles extension to the original set. He's done a fantastic job retaining a lot of the same character as the original set!  
+  In his own words, "these ones are harder and more focused on the CREATE and CALL opcodes" (and in my opinion a whole lot of fun).
 
-REWRITE THIS EXTRACT
+In this article, I aim to create a guide that will help fill in any missing understanding for those stuck on any of the puzzles. I'm assuming that you have completed the first set prior over @ [EVM-PUZZLES](https://github.com/fvictorio/evm-puzzles). If you haven't completed them I recommend having a look at some of the resources listed on [devpill.me](https://www.devpill.me/docs/smart-contract-development/evm-deep-dive/) as well as having a read through the [evm.codes](https://www.evm.codes/) website, then give the first challenges a go. 
 
-Throughout this article I aim to create guide that will help fill in any missing understanding for anyone stuck on any of the puzzles. I'll also make the assumption that you have completed the first set of [EVM-PUZZLES](https://github.com/fvictorio/evm-puzzles). If you haven't completed those I recommend having a look with some resources listed on [devpill.me](https://www.devpill.me/docs/smart-contract-development/evm-deep-dive/) aswell as having a read through the [evm.codes](https://www.evm.codes/) website first, then five the first challenges a go. 
-
-To get started, clone the [10 more evm puzzles](https://github.com/daltyboy11/more-evm-puzzles). Move your terminal to into the cloned folder and install hardhat. The repo provides a great interactive cli to help you through the puzzles - to boot it up run `npx hardhat play`.
+To get started, clone the [10 more evm puzzles](https://github.com/daltyboy11/more-evm-puzzles). Move your cwd into the cloned folder and install hardhat (`npm i --save-dev hardhat`). Much like the first challenges this set consists of a great interactive cli to guide you through the puzzles - to boot it up run `npx hardhat play`.
 
 Full steps:
 ```shell
@@ -24,9 +20,9 @@ npx hardhat play
 
 
 ## Puzzle(1)1
-Straight off the bat you are given a list of opcodes that represent an ethereum contract. On the far left we have the byte position of this line's opcode. In the middle we have the opcode itself and on the far right we have the mnemonic for each opcode ( the more human readable option ). For each of the puzzles I have added a stack column that illustrates the current state of the evm's stack (INCLUDE LINK) at each operation, aswell as an action column that provides any aditional comments. 
+Straight off the bat, we are given a list of opcodes that represent an Ethereum contract. On the far left, we have the byte position of this line's opcode. In the middle, we have the opcode itself and on the far right, we have the opcode's mnemonic. To help illustrate each puzzle I have added a stack column that contains the state of the stack for each operation, as well as an action column to provide any additional comments. 
 
-The goal, like in the first set of is to provide the msg.value and (or) msg.data that will reach the STOP opcode without running into any of the REVERT of INVALID opcodes that are littered around the program. 
+The goal remains the same as in the original Evm Puzzles. Provide the msg.value and (or) msg.data value that will complete the execution of the contract (reach STOP without REVERTing). 
 ```
 ############
 # Puzzle 1 #
@@ -109,18 +105,18 @@ The goal, like in the first set of is to provide the msg.value and (or) msg.data
 ? Enter the value to send: (0) 
 ? Enter the calldata to send: (0) 
 ```
-The first opcode that we encounter is CALLDATASIZE, this opcode places the size (in bytes) of the msg.data parameter and pushes it to the stack. Similarly, CALLVALUE pushes the msg.value parameter onto the stack. It's likely that you've come across these before.
+The first opcode that we encounter is CALLDATASIZE, this opcode places the size (in bytes) of the msg.data parameter and pushes it to the stack. Similarly, CALLVALUE pushes the msg.value parameter onto the stack. You've likely come across these before.
 
-EXP - The exponent opcode tales two inputs - first item in the stack being the base, and the second the exponent, pushing (a^b) back onto the stack.
+EXP - The exponent opcode tales two inputs - the first item in the stack being the base, and the second the exponent, pushing (a^b) back onto the stack.
 The PC or program counter opcode ( unsurprisingly ) returns the current value of the program counter.
 
-The goal of this challenge is to provide calldata that the JUMP operations at byte 0x03 and 0x44 execute successfully, updating the PC to 0x40 and 0x47 respectively.
+The goal of this challenge is to provide CALLDATA that the JUMP operations at byte 0x03 and 0x44 execute successfully, updating the PC to 0x40 and 0x47 respectively.
 
-The easiest way to solve this puzzle is to work backwards from the JUMPDEST on 0x47. To reach this code the input to the JUMP operation jumps to the location ( CALLDATASIZE + PC ). PC pushes the current value of the program counter onto the stack, by looking at the counter on the left we can see that it will be 0x41. Leaving the CALLDATASIZE value that we must pass to be 0x47-0x41 = 0x6 bytes. 
+The easiest way to solve this puzzle is to work backward from the JUMPDEST on 0x47. To reach this code the input to the JUMP operation jumps to the location ( CALLDATASIZE + PC ). PC pushes the current value of the program counter onto the stack, by looking at the counter on the left we can see that it will be 0x41. Leaving the CALLDATASIZE value that we must pass to be 0x47-0x41 = 0x6 bytes. 
 
-We can be certain that any variatoin of 6 byte calldata is required to pass this challenge. For simplicity I will select 0x000000000000.
+We can be certain that any variation of 6-byte calldata is required to pass this challenge. For simplicity, I will select 0x000000000000.
 
-Now we know the value of CALLDATASIZE ( 6 ) we can work backwards again to get the CALLVALUE required. The first jump operation must go to byte 0x40, as the result of CALLVALUE ^ CALLDATASIZE = 0x40. 0x40 is 64 in decimal, and CALLDATASIZE is 6., therefore to satisfy this equation CALLVALUE must be 2.
+Now we know the value of CALLDATASIZE ( 6 ) we can work backwards again to get the CALLVALUE required. The first jump operation must go to byte 0x40, as the result of CALLVALUE ^ CALLDATASIZE = 0x40. 0x40 is 64 in decimal, and CALLDATASIZE is 6; therefore to satisfy this equation CALLVALUE must be 2.
 
 This leaves our inputs to be:
 
@@ -129,7 +125,7 @@ Calldata: 0x000000000000 -> 6 bytes
 
 View the solution in [evm.codes](https://www.evm.codes/playground?callValue=2&unit=Wei&callData=0x000000000000&codeType=Bytecode&code='36340A56yyyy5B58360156x5B00'~xxxFEy~~~xzz%01xyz~_).
 
-That's the first puzzle completed. It was a fun one, right!
+That's the first puzzle completed. Only nine more to go...
 
 ## Puzzle (1)2
 Onto the second puzzle. 
@@ -169,9 +165,9 @@ Onto the second puzzle.
 ? Enter the calldata:
 ```
 
-The aim of this challenge is to deploy a contract that will cause the JUMPI at byte 0x1B to succeed. In order to do this a call to the contract must have RETURNDATASIZE opcode must have a value of 0xA. We must deploy a contract that returns a 10 byte value. 
+This challenge aims to deploy a contract that will cause the JUMPI at byte 0x1B to succeed. To do this a call to the contract must have RETURNDATASIZE opcode must have a value of 0xA. We must deploy a contract that returns a 10 byte value. 
 
-If you competed the first ten challenges you have become acquainted with how contracts are deployed in the EVM. If you remember most of it you can skip this next paragraph, but if you're feeling a bit rusty look no further as I'll attempt to explain it works below. 
+If you've completed the first ten challenges you have become acquainted with how contracts are deployed in the EVM. If you remember most of it you can skip this next paragraph, but if you're feeling a bit rusty look no further as I'll attempt to explain it works below. 
 
 When the CREATE opcode is called, it consumers 3 items from the stack:
 
@@ -179,9 +175,9 @@ When the CREATE opcode is called, it consumers 3 items from the stack:
 2. offset - The byte offset in memory in bytes that contains the contract creation code.
 3. size - The size in bytes of the contract creation code.
 
-This contract creation code is what is executed within a contract's constructor. Within it arbitrary instructions can be executed from the new context. The most important part of this contructor code is the RETURN value. As whatever data is returned from the constructor code will determine what is stored as the new contract's bytecode.  
+This contract creation code is what is executed within a contract's constructor. Within it, arbitrary instructions can be executed from the new context. The most important part of this constructor code is the RETURN value. As whatever data is returned from the constructor code will determine what is stored as the new contract's bytecode.  
 
-The purpose of the snippet below is to return `0x69ffffffffffffffffffff600052600a6016f3` - our new contract's execution code. To do this we push the full runtime code into memory with PUSH19 then return it.  
+The purpose of the snippet below is to return `0x69ffffffffffffffffffff600052600a6016f3` - our new contract's execution code. To do this we push the full runtime code into memory with PUSH19 and then return it.  
 
 ```
 PUSH19 0x69ffffffffffffffffffff600052600a6016f3
@@ -204,7 +200,7 @@ PUSH1 0xa
 PUSH1 0x16
 RETURN
 ```
-This will return the 10 byte value we require. You can confirm this on [evm.codes](https://www.evm.codes/playground?unit=Wei&codeType=Mnemonic&code='w0vxzzzzz%20~yMSTORE~xa~x16yRETURN'~ywvzffffy%5CnwPUSH1v%200%01vwyz~_).
+This will return the 10-byte value we require. You can confirm this on [evm.codes](https://www.evm.codes/playground?unit=Wei&codeType=Mnemonic&code='w0vxzzzzz%20~yMSTORE~xa~x16yRETURN'~ywvzffffy%5CnwPUSH1v%200%01vwyz~_).
 
 Solution:
 0x7269ffffffffffffffffffff600052600a6016f360005260206013602003f3
@@ -247,8 +243,8 @@ You can step through the execution of the entire challenge [here](https://www.ev
 ```
 The contract's execution code will contain `0x69ffffffffffffffffffff600052600a6016f3`:
 
-In this code we have a new OPCODE: DELEGATECALL. DELETGATECALL is similar to the call opcode, however the call is executed within the calling contract's context. A good mental model that helps me wrap my head around it is to think that the code is copied from the callee contract into the caller contract, then executed there. All storage, memory msg value and sender parameters are that of the calling contract. 
-I can't do justice to explaining DELEGATECALL wihtin this short article; however, (noxx has written an excellent article)[https://noxx.substack.com/p/evm-deep-dives-the-path-to-shadowy-a5f?token=eyJ1c2VyX2lkIjozMTkzMTU5MCwicG9zdF9pZCI6NTM1MzE3ODksIl8iOiJsYVd3YyIsImlhdCI6MTY1MzMzMjgwMSwiZXhwIjoxNjUzMzM2NDAxLCJpc3MiOiJwdWItNzc0NzUxIiwic3ViIjoicG9zdC1yZWFjdGlvbiJ9.Yrsh5DNMrn4HOcyZ0NIt1ElXVEsKYxs8FNm_VO8qH44&s=r] that explains the concept beautifully. 
+In this code, we encounter a new OPCODE: DELEGATECALL. DELETGATECALL is similar to the call opcode, however the call is executed within the calling contract's context. A good mental model that helps me wrap my head around it is to think that the code is copied from the callee contract into the caller contract, then executed there. All storage, memory, msg value, and sender parameters are that of the calling contract. 
+I can't do justice to explaining DELEGATECALL wihtin this short article; however, [noxx has written an excellent article](https://noxx.substack.com/p/evm-deep-dives-the-path-to-shadowy-a5f?token=eyJ1c2VyX2lkIjozMTkzMTU5MCwicG9zdF9pZCI6NTM1MzE3ODksIl8iOiJsYVd3YyIsImlhdCI6MTY1MzMzMjgwMSwiZXhwIjoxNjUzMzM2NDAxLCJpc3MiOiJwdWItNzc0NzUxIiwic3ViIjoicG9zdC1yZWFjdGlvbiJ9.Yrsh5DNMrn4HOcyZ0NIt1ElXVEsKYxs8FNm_VO8qH44&s=r) that explains the concept beautifully. 
 
 To pass this challenge we must make the storage value within the current contract have a value of AA. This is where DELEGATECALL comes in, if we can deploy a contract that performs SSTORE on slot 5 with the value 0xAA, DELEGATECALL will ensure that SSTORE sets the slots within the calling contract. Leaving SLOAD to read the correct value. 
 
@@ -365,16 +361,16 @@ Value: Any value that is a multiple of 2!
 
 ? Enter the calldata: 
 ```
-To pass the first JUMPI instruction in this challenge calldata sent must be larger than 32 bytes. After the first JUMPI the calldata is copied into memory. So far very vanilla stuff! 
+To pass the first JUMPI instruction in this challenge calldata sent must be larger than 32-bytes. After the first JUMPI the calldata is copied into memory. So far very vanilla stuff! 
 
-The main mechanic in this challenge is understanding how the evm allocates new memory. The EVM provides 3 opcodes to interact with memory. MLOAD consumes an offset and loads 32 bytes from memory. MSTORE stores 32 bytes into memory and MSTORE8 stores a single byte into memory. The catch with this challenge is around the MSTORE allocates memory in 32 byte chunks. If you were to store 2 bytes into memory, 32 bytes would still be allocated. 
+The main mechanic in this challenge is understanding how the evm allocates new memory. The EVM provides 3 opcodes to interact with memory. MLOAD consumes an offset and loads 32-bytes from memory. MSTORE stores 32-bytes into memory and MSTORE8 stores a single byte into memory. The catch with this challenge is around the MSTORE allocates memory in 32-byte chunks. If you were to store 2-bytes into memory, 32-bytes would still be allocated. 
 
-The MSIZE opcode reads the size amount of allocated or hot memory. Therefore, even if you only store 5 bytes MSIZE would return 32 bytes as the size of the allocated memory. Now we have this knowledge we can pass this challenge.
+The MSIZE opcode reads the size amount of allocated or hot memory. Therefore, even if you only store 5 bytes MSIZE would return 32-bytes as the size of the allocated memory. Now we have this knowledge we can pass this challenge.
 
-As the first JUMPI requires that more than 32 bytes of memory are passed in as calldata. This calldata is then stored in memory. To complete this challenge you must provide calldata that is 3 bytes smaller than the allocated memory. Remember how memory is allocated in 32 byte chunks? Therefore we can provide any size of calldata that is 32 + (32\*x) - 3 bytes long.
+As the first JUMPI requires that more than 32-bytes of memory are passed in as calldata. This calldata is then stored in memory. To complete this challenge you must provide calldata that is 3 bytes smaller than the allocated memory. Remember how memory is allocated in 32 byte chunks? Therefore we can provide any size of calldata that is 32 + (32\*x) - 3-bytes long.
 
 This will do: 
-0x60008080806002335af160005260206000f3000000000000000000000000000060008080806002335af160005260206000f30000000000000000000000 (61 bytes)
+0x60008080806002335af160005260206000f3000000000000000000000000000060008080806002335af160005260206000f30000000000000000000000 (61-bytes)
 
 [Code here](https://www.evm.codes/playground?unit=Wei&callData=0x60008080806002335af160005260206000f3000000000000000000000000000060008080806002335af160005260206000f30000000000000000000000&codeType=Bytecode&code='60203611~857FD5B36~0~037365903~314601957FD5B00'~600%01~_).
 
@@ -437,8 +433,8 @@ Since the least significant byte is set to 0 we have to add 17 to make this happ
 
 ? Enter the value to send: (0) 
 ```
-I love the mechanics in this challenge. This is the first time that we have seen a loop implementation in bytecode. 
-The best way i can demonstrate this code is to write it out in solidity.
+I love the mechanics of this challenge. This is the first time that we have seen a loop implementation in bytecode. 
+The best way I can demonstrate this code is to write it out in solidity.
 
 ```
 contract Puzzle7 {
@@ -454,7 +450,7 @@ Note: This is not an exact representation but I hope it illustrates the solution
 
 The idea of this challenge is to provide a CALLVALUE that causes the forloop to execute enough times such that 166 (0xA6) gas is spent.
 
-To spend 166 gas we have execute the loop 4 times. Give it a go in [evm.codes](https://www.evm.codes/playground?callValue=4&unit=Wei&codeType=Bytecode&code='5a345b60019003806000146011576002565b5a90910360a614601d57fd5b00'_).
+To spend 166 gas we have to execute the loop 4 times. Give it a go in [evm.codes](https://www.evm.codes/playground?callValue=4&unit=Wei&codeType=Bytecode&code='5a345b60019003806000146011576002565b5a90910360a614601d57fd5b00'_).
 
 ## Puzzle 8
 ```
@@ -503,17 +499,17 @@ To spend 166 gas we have execute the loop 4 times. Give it a go in [evm.codes](h
 
 Have you ever wondered what `payable` does when you add it to a function definition in solidity? By default all functions in solidity begin with bytecode similar to the first few bytes of this challenge ( CALLVALUE, ISZERO, NOT, PUSH X, JUMPI, REVERT ), this code exists as a safety rail to prevent users of smart contract from sending ether to functions that are not intended to receive ether. It exists for the sake of user protection and security, however it adds ( redundant? ) checks that cost gas. Adding the payable descriptor actually removes this code, allowing the contract to receive ether without reverting. In essence, this contract refuses to receive ether.
 
-The snippet then goes onto create a contract contaning the calldata provided. 
+The snippet then goes on to create a contract containing the calldata provided. 
 Followed by calling the crated contract with the full balance of the current contract, checks to see if the execution succeeded, then checks if the balance before sending is the same as the balance after sending.
 
-At first instinct we can perform the same code as in challenge 4, however this contract does not receive ether so transfering ether to this account will not work!
+At first instinct we can perform the same code as in challenge 4, however; this contract does not receive ether so transfering ether to this account will not work!
 
 The EVM does provide a way to send ether to contracts that do not receive ether and it is through SELFDESTRUCT.
 
 Here is the description from evm.codes:  
 *The current account is registered to be destroyed, and will be at the end of the current transaction. The transfer of the current balance to the given account cannot fail. In particular, the destination account code (if any) is not executed, or, if the account does not exist, the balance is still added to the given address.*
 
-Unlike the CALL opcode, no code is executed with SELFDESTRUCT. Therefore the balance is forceadded to the account.
+Unlike the CALL opcode, no code is executed with SELFDESTRUCT. Therefore the balance is force added to the account.
 
 Here is what the deployed bytecode will look like: 
 ```
@@ -562,9 +558,9 @@ callvalue -> 0x6133FF6000526002601Ef3
 ? Enter the value to send: (0)
 ```
 This introduces us to two new opcodes that we have not seen yet SHA3 and SHR. 
-SHA3 takes in to opcodes as arguements, the offset and size of bytes of memory that will be inputs. Placing the output onto the stack. SHR is the shift right operation, performing a bitshift by x bytes. 
+SHA3 takes in two opcodes as arguments, the offset and size of bytes of memory to be hashed. Placing the output onto the stack. SHR is the shift right operation, performing a bitshift by x bytes. 
 
-To get the winning input for this function you have to bruteforce until you reach a keccak that has a least significant byte value that is equal to A8. As keecak hashes are uniformly distributed is should thoeretically take you less than 256 tries. Give it a go? [(evm.codes link)](https://www.evm.codes/playground?unit=Wei&codeType=Bytecode&code='34600052602060002060F81C60A814601657FDFDFDFD5B00'_)
+To get the winning input for this function you have to brute-force until you reach a keccak that has the least significant byte value that is equal to A8. As keecak hashes are uniformly distributed it should theoretically take you less than 256 tries. Give it a go? [(evm.codes link)](https://www.evm.codes/playground?unit=Wei&codeType=Bytecode&code='34600052602060002060F81C60A814601657FDFDFDFD5B00'_)
 
 ## Puzzle 10
 ```
@@ -609,6 +605,6 @@ Heres the final input:
 
 There we have it!! I hope you've learned something about the EVM from reading this article. Maybe I'll create some more challenges like this myself!! 
 
-Many thanks to the brains behind these puzzles, fvictorio and daltyboy11 - they served as a perfect and fun excuse for me to spend more time playing around with the EVM. See y'around, 
+Many thanks to the brains behind these puzzles, fvictorio and daltyboy11 - they served as a perfect and fun excuse for me to spend more time playing around with the EVM. See y'around.
 
 
