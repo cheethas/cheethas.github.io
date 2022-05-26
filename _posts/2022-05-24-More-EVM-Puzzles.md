@@ -3,7 +3,7 @@ layout: post
 title: More EVM Puzzles
 ---
 
-It's been a while since fvictorio's first release of [Evm Puzzles](https://github.com/fvictorio/evm-puzzles). For those of us who wanted more of them daltyboy11 of goldfinch has blessed has come to the rescue, releasing 10 more puzzles extension to the original set. He's done a fantastic job retaining a lot of the same character as the original set!  
+It's been a while since fvictorio's first release of [Evm Puzzles](https://github.com/fvictorio/evm-puzzles). For those of us who wanted more of them daltyboy11 of goldfinch has come to the rescue, releasing 10 more puzzles extension to the original set. He's done a fantastic job retaining a lot of the same character as the original set!  
   In his own words, "these ones are harder and more focused on the CREATE and CALL opcodes" (and in my opinion a whole lot of fun).
 
 In this article, I aim to create a guide that will help fill in any missing understanding for those stuck on any of the puzzles. I'm assuming that you have completed the first set prior over @ [EVM-PUZZLES](https://github.com/fvictorio/evm-puzzles). If you haven't completed them I recommend having a look at some of the resources listed on [devpill.me](https://www.devpill.me/docs/smart-contract-development/evm-deep-dive/) as well as having a read through the [evm.codes](https://www.evm.codes/) website, then give the first challenges a go. 
@@ -107,7 +107,7 @@ The goal remains the same as in the original Evm Puzzles. Provide the msg.value 
 ```
 The first opcode that we encounter is CALLDATASIZE, this opcode places the size (in bytes) of the msg.data parameter and pushes it to the stack. Similarly, CALLVALUE pushes the msg.value parameter onto the stack. You've likely come across these before.
 
-EXP - The exponent opcode tales two inputs - the first item in the stack being the base, and the second the exponent, pushing (a^b) back onto the stack.
+EXP - The exponent opcode takes two inputs - the first item in the stack being the base, and the second the exponent, pushing (a^b) back onto the stack.
 The PC or program counter opcode ( unsurprisingly ) returns the current value of the program counter.
 
 The goal of this challenge is to provide CALLDATA that the JUMP operations at byte 0x03 and 0x44 execute successfully, updating the PC to 0x40 and 0x47 respectively.
@@ -124,6 +124,11 @@ Value: 2
 Calldata: 0x000000000000 -> 6 bytes
 
 View the solution in [evm.codes](https://www.evm.codes/playground?callValue=2&unit=Wei&callData=0x000000000000&codeType=Bytecode&code='36340A56yyyy5B58360156x5B00'~xxxFEy~~~xzz%01xyz~_).
+
+**Bug?**
+As an alternative solution (perhaps unintentional)- you can skip straight to the last JUMPDEST with 71^1:
+Value: 71
+Calldata: 0x00 -> 1 byte
 
 That's the first puzzle completed. Only nine more to go...
 
@@ -169,7 +174,7 @@ This challenge aims to deploy a contract that will cause the JUMPI at byte 0x1B 
 
 If you've completed the first ten challenges you have become acquainted with how contracts are deployed in the EVM. If you remember most of it you can skip this next paragraph, but if you're feeling a bit rusty look no further as I'll attempt to explain it works below. 
 
-When the CREATE opcode is called, it consumers 3 items from the stack:
+When the CREATE opcode is called, it consumes 3 items from the stack:
 
 1. value - The value in wei to be sent to the created account.
 2. offset - The byte offset in memory in bytes that contains the contract creation code.
@@ -331,7 +336,7 @@ Value: Any value that is a multiple of 2!
 
 [See solution here!](https://www.evm.codes/playground?callValue=20&unit=Wei&callData=0x60008080808060024704905AF1&codeType=Bytecode&code='303136~0~03736~03031F0319004~214601857FD5B00'~600%01~_)
 
-## Puzzle (1)5
+## Puzzle 5
 ```
 ############
 # Puzzle 5 #
@@ -369,12 +374,13 @@ The MSIZE opcode reads the size amount of allocated or hot memory. Therefore, ev
 
 As the first JUMPI requires that more than 32-bytes of memory are passed in as calldata. This calldata is then stored in memory. To complete this challenge you must provide calldata that is 3 bytes smaller than the allocated memory. Remember how memory is allocated in 32 byte chunks? Therefore we can provide any size of calldata that is 32 + (32\*x) - 3-bytes long.
 
-This will do: 
-0x60008080806002335af160005260206000f3000000000000000000000000000060008080806002335af160005260206000f30000000000000000000000 (61-bytes)
+This will do:   
+0x60008080806002335af160005260206000f3000000000000000000000000000 
+060008080806002335af160005260206000f30000000000000000000000 (61-bytes)
 
 [Code here](https://www.evm.codes/playground?unit=Wei&callData=0x60008080806002335af160005260206000f3000000000000000000000000000060008080806002335af160005260206000f30000000000000000000000&codeType=Bytecode&code='60203611~857FD5B36~0~037365903~314601957FD5B00'~600%01~_).
 
-## Puzzle (1)6
+## Puzzle 6
 ```
 ############
 # Puzzle 6 #
@@ -399,7 +405,7 @@ Since the least significant byte is set to 0 we have to add 17 to make this happ
 
 [View solution here](https://www.evm.codes/playground?callValue=17&unit=Wei&codeType=Bytecode&code='7yyyy03401600114602a57fd5b00'~zzzzzffy~~%01yz~_).
 
-## Puzzle (1)7
+## Puzzle 7
 ```
 ############
 # Puzzle 7 #
@@ -452,7 +458,7 @@ The idea of this challenge is to provide a CALLVALUE that causes the forloop to 
 
 To spend 166 gas we have to execute the loop 4 times. Give it a go in [evm.codes](https://www.evm.codes/playground?callValue=4&unit=Wei&codeType=Bytecode&code='5a345b60019003806000146011576002565b5a90910360a614601d57fd5b00'_).
 
-## Puzzle (1)8
+## Puzzle 8
 ```
 ############
 # Puzzle 8 #
@@ -530,7 +536,7 @@ RETURN
 callvalue -> 0x6133FF6000526002601Ef3
 [Solution](https://www.evm.codes/playground?unit=Wei&callData=0x6133FF6000526002601Ef3&codeType=Bytecode&code='341519y07z36x3736xf047xx47865af1y0114y28z4714y2fz00'~y00z57fd5by60x~~%01xyz~_).
 
-## Puzzle (1)9
+## Puzzle 9
 ```
 ############
 # Puzzle 9 #
@@ -562,7 +568,7 @@ SHA3 takes in two opcodes as arguments, the offset and size of bytes of memory t
 
 To get the winning input for this function you have to brute-force until you reach a keccak that has the least significant byte value that is equal to A8. As keecak hashes are uniformly distributed it should theoretically take you less than 256 tries. Give it a go? [(evm.codes link)](https://www.evm.codes/playground?unit=Wei&codeType=Bytecode&code='34600052602060002060F81C60A814601657FDFDFDFD5B00'_)
 
-## Puzzle (2|1)0
+## Puzzle 10
 ```
 #############
 # Puzzle 10 #
@@ -598,8 +604,9 @@ Well done you've made it to the last challenge! This one is some good ol fashion
 
 The two operations in question are located at bytes 0x2B and 0x36. With an AND and OR at each respectively. You provide the input to the first operation through the first 32 bytes of calldata and input for the second operation through the second 32 bytes. The aim of the challenge is to end up with ( CALLDATA[0:32] AND 0xF0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0 ) OR CALLDATA[32:64] == 0xABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB. By applying general rules of bitwise operations A AND B OR C can simplify to just C. Where C in this instance is CALLDATA[32:64]. In otherwords, it does not matter what you provide as the first 32 bytes aslong as you provide 0xABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB as the second set of bytes.
 
-Heres the final input:
-0x0000000000000000000000000000000000000000000000000000000000000000ABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB.
+Heres the final input:  
+0x0000000000000000000000000000000000000000000000000000000000000000
+ABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB.
 
 [Solution on evm.codes](https://www.evm.codes/playground?unit=Wei&callData=0x0000000000000000000000000000000000000000000000000000000000000000ABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB&codeType=Bytecode&code='xyw7ftttt16xxw177fssss14605d57fd5b00'~vvvvzuuuuy6000x6020wy37y51vf0uabt~~szz%01stuvwxyz~_).
 
