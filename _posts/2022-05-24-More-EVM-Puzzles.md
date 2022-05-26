@@ -336,7 +336,7 @@ Value: Any value that is a multiple of 2!
 
 [See solution here!](https://www.evm.codes/playground?callValue=20&unit=Wei&callData=0x60008080808060024704905AF1&codeType=Bytecode&code='303136~0~03736~03031F0319004~214601857FD5B00'~600%01~_)
 
-## Puzzle 5
+## Puzzle (1)5
 ```
 ############
 # Puzzle 5 #
@@ -405,7 +405,7 @@ Since the least significant byte is set to 0 we have to add 17 to make this happ
 
 [View solution here](https://www.evm.codes/playground?callValue=17&unit=Wei&codeType=Bytecode&code='7yyyy03401600114602a57fd5b00'~zzzzzffy~~%01yz~_).
 
-## Puzzle 7
+## Puzzle (1)7
 ```
 ############
 # Puzzle 7 #
@@ -458,7 +458,7 @@ The idea of this challenge is to provide a CALLVALUE that causes the forloop to 
 
 To spend 166 gas we have to execute the loop 4 times. Give it a go in [evm.codes](https://www.evm.codes/playground?callValue=4&unit=Wei&codeType=Bytecode&code='5a345b60019003806000146011576002565b5a90910360a614601d57fd5b00'_).
 
-## Puzzle 8
+## Puzzle (1)8
 ```
 ############
 # Puzzle 8 #
@@ -536,7 +536,7 @@ RETURN
 callvalue -> 0x6133FF6000526002601Ef3
 [Solution](https://www.evm.codes/playground?unit=Wei&callData=0x6133FF6000526002601Ef3&codeType=Bytecode&code='341519y07z36x3736xf047xx47865af1y0114y28z4714y2fz00'~y00z57fd5by60x~~%01xyz~_).
 
-## Puzzle 9
+## Puzzle (1)9
 ```
 ############
 # Puzzle 9 #
@@ -568,7 +568,7 @@ SHA3 takes in two opcodes as arguments, the offset and size of bytes of memory t
 
 To get the winning input for this function you have to brute-force until you reach a keccak that has the least significant byte value that is equal to A8. As keecak hashes are uniformly distributed it should theoretically take you less than 256 tries. Give it a go? [(evm.codes link)](https://www.evm.codes/playground?unit=Wei&codeType=Bytecode&code='34600052602060002060F81C60A814601657FDFDFDFD5B00'_)
 
-## Puzzle 10
+## Puzzle (1|2)0
 ```
 #############
 # Puzzle 10 #
@@ -613,5 +613,7 @@ ABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB.
 There we have it!! I hope you've learned something about the EVM from reading this article. Maybe I'll create some more challenges like this myself!! 
 
 Many thanks to the brains behind these puzzles, fvictorio and daltyboy11 - they served as a perfect and fun excuse for me to spend more time playing around with the EVM. See y'around.
+
+
 
 
